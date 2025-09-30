@@ -1,0 +1,61 @@
+name: OpenTofu Azure Workflow
+
+on:
+  workflow_dispatch:
+    inputs:
+      action:
+        description: "Choose OpenTofu action"
+        required: true
+        default: "plan"
+        type: choice
+        options:
+          - init
+          - validate
+          - plan
+          - apply
+          - destroy
+
+jobs:
+  tofu:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout repo
+      uses: actions/checkout@v3
+
+    - name: Setup OpenTofu
+      uses: opentofu/setup-opentofu@v1
+      with:
+        tofu_version: 1.7.0
+
+    - name: Azure Login
+      uses: azure/login@v1
+      with:
+        creds: ${{ secrets.AZURE_CREDENTIALS }}
+
+    - name: Run OpenTofu Command
+      run: |
+        case "${{ github.event.inputs.action }}" in
+          init)
+            tofu init
+            ;;
+          validate)
+            tofu validate
+            ;;
+          plan)
+            tofu init
+            tofu plan
+            ;;
+          apply)
+            tofu init
+            tofu apply -auto-approve
+            ;;
+          destroy)
+            tofu init
+            tofu destroy -auto-approve
+            ;;
+          *)
+            echo "Invalid action"
+            exit 1
+            ;;
+        esac
