@@ -1,4 +1,4 @@
-name: OpenTofu Azure Workflow
+name: Infra_Deploy_Using_Tofu
 
 on:
   workflow_dispatch:
