@@ -14,6 +14,14 @@ on:
           - plan
           - apply
           - destroy
+  push:
+    branches:
+      - feature/**
+      - feature/terraform-initialcode
+  
+  pull_request:
+    branches:
+      - main
 
 jobs:
   tofu:
